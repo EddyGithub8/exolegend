@@ -27,6 +27,8 @@ void reset()
 
     // initialisation de toutes vos variables avant le début d'un match
     game->goal = gladiator->robot->getData().position;
+    liste.type = TYPE_MOUVEMENT_SUIVANT;
+    liste.fin = game->goal;
 }
 Position current;
 uint8_t count = 0;
@@ -38,6 +40,7 @@ void loop()
     { // tester si un match à déjà commencer
         // code de votre stratégie
         game->Update();
-        robot_state_machine->transition();
+        robot_state_machine->transition();  
+
     }
 }

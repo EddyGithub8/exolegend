@@ -27,6 +27,7 @@ public:
 
     float squareSize;
 
+    uint8_t count;
     pathFinder coord_list;
     pathFinder simplified_coord_list;
 

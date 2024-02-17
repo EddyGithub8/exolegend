@@ -1,15 +1,19 @@
 #include "rocket.h"
-// #include "gamedata.h"
+#include "Gamedata/GameData.h"
+#include "float.h"
+#include "mouvement/movement.h"
 using namespace std;
 
-void getTarget()
+void getTarget(GameState *game)
 {
-    uint32_t start_time = millis() / 1000;
 
-    while (millis() / 1000 - start_time < 1)
-    {
-        float dx = 1;
-        float dy = 1;
-        double alpha = atan2(dy, dx);
-    }
+    float dx = 1;
+    float dy = 1;
+    double alpha = atan2(dy, dx);
+    float theta = game->myData.position.x;
+    Position cons;
+    Position pos;
+    cons.a = alpha;
+    pos.a = theta;
+    go_to(cons, pos, game->gladiator);
 }

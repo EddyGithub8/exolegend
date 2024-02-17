@@ -73,6 +73,7 @@ vector<int> BFSPruned(GameState *game)
     }
     // trouve la case de plus faible cout
     end_coord = index_min;
+    game->gladiator->log("Position de la case de plus faible coût (i:%d,j:%d)", index_min % 12, index_min / 12);
     // trouve le chemin vers la case de plus faible cout
     vector<int> path;
     int current = end_coord;
@@ -83,6 +84,7 @@ vector<int> BFSPruned(GameState *game)
     }
     path.push_back(start_coord);
     reverse(path.begin(), path.end()); // Inverser le chemin car on l'a construit de la fin au début
+
     return path;
 }
 

@@ -2,12 +2,19 @@
 #include "GameData/GameData.h"
 #include <vector>
 #include "mouvement/goto.h"
+
 StateMachine::StateMachine(GameState *game) : game(game), currentState(State::ATTENTE) {}
 
 void StateMachine::switchState(State state) {
     switch (state){
         case State::RECHERCHE_FUSEE:
             currentState = state;
+            game->count = 0;
+            new_missile(game);
+            break;
+        case State::EXPLORATION:
+            currentState = state;
+            game->count = 0;
             new_missile(game);
             break;
         default: break;
@@ -20,7 +27,6 @@ void StateMachine::transition()
     bool t_ennemi_proche = ennemi_proche(game->gladiator);
     bool t_recherche_cible = true;
     bool t_tirer = true;
-    game->gladiator->log("Chercheur une fusée : %d", t_recherche_fusee);
 
     switch (currentState)
     {
@@ -35,7 +41,7 @@ void StateMachine::transition()
         }
         else
         {
-            currentState = State::EXPLORATION;
+            switchState(State::EXPLORATION);
         }
         break;
 
@@ -47,8 +53,6 @@ void StateMachine::transition()
 
     case State::EXPLORATION:
     {
-        game->count = 0;
-        std::vector<int> path = BFSPruned(game);
         followPath(game);
         if (t_recherche_cible)
         {

@@ -1,9 +1,10 @@
 #pragma once
+
 #include "gladiator.h"
 
 #define THRESHOLD 0.07
 
-extern float kw, kv, wlimit, vlimit, erreurPos;
+
 
 Position getSquareCoor(const MazeSquare *square, float squareSize);
 Position getSquareCoor(uint8_t i, uint8_t j, float squareSize);

@@ -15,7 +15,7 @@ void StateMachine::switchState(State state) {
         case State::EXPLORATION:
             currentState = state;
             game->count = 0;
-            new_missile(game);
+            new_mission(game);
             break;
         default: break;
     }
@@ -62,7 +62,7 @@ void StateMachine::transition()
         {
             currentState = State::PVP;
         }
-        else
+        if(game->count == game->simplified_coord_list.size)
         {
             currentState = State::ATTENTE;
         }

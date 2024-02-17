@@ -40,7 +40,8 @@ vector<int> BFSPruned(GameState *game)
         int j = currentVertex / 12;
         q.pop();
         int *result = getCaseNeighboor(i, j, game);
-        game->gladiator->log("DEPTH : %d", depth) for (int i = 0; i < 4; ++i) // Parcourir tous les sommets adjacents du sommet courant
+        game->gladiator->log("DEPTH : %d", depth);
+        for (int i = 0; i < 4; ++i) // Parcourir tous les sommets adjacents du sommet courant
         {
 
             int adjacentVertex = result[i];

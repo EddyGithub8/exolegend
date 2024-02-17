@@ -98,7 +98,7 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     game->gladiator->log("TIME %d : ", time);
 
     uint32_t time_thresh_init = 8; // temps à partir du quel il faut faire attention au shr
-    uint32_t time_between_shrinking = 4;
+    uint32_t time_between_shrinking = 16;
     if (time > time_thresh_init)
     {
         int shrink_progress = (time - 8) / time_between_shrinking;
@@ -108,5 +108,27 @@ int heuristic(const MazeSquare *sqr, GameState *game)
             h += 500;
         }
     }
+    const MazeSquare *sqri = game->gladiator->maze->getSquare(i, j);
+    uint8_t possession = sqri->possession;
+    // si case vide 2.5
+    switch (possession)
+    {
+    case 0: // case vide
+        h += 3;
+        break;
+    case 1: // case team
+        h += 6;
+        break;
+    case 2: // case ennemi
+        h += 1;
+        break;
+    default:
+        break;
+    }
+    if (abs(i + j * 12 - game->allyData.position.x + game->allyData.position.y * 12) < 1)
+    {
+        h += 500;
+    }
+
     return h;
 }

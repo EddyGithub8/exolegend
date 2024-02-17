@@ -10,23 +10,13 @@ float distEucl(int ia, int ja, int ib, int jb)
     return sqrt(dx * dx + dy * dy);
 }
 
-bool ennemi_proche(Gladiator *gladiator)
+bool ennemi_proche(GameState *game)
 {
-    bool near = false;
-    RobotData my_data = gladiator->robot->getData();
+    if(game->er1Data.id == 0 || game->er2Data.id == 0) return false;
 
-    RobotList ids_list = gladiator->game->getPlayingRobotsId();
-    for (int i = 0; i < 4; i++)
-    {
-
-        if (ids_list.ids[i] != 121 && ids_list.ids[i] != 120)
-        {
-            RobotData others_data = gladiator->game->getOtherRobotData(ids_list.ids[i]);
-            if (distEucl(my_data.position.x, my_data.position.y, others_data.position.x, my_data.position.y) < dist_thresh)
-            {
-                near = true;
-            }
-        }
-    }
-    return near;
+    Position me = game->myData.position;
+    Position er1 = game->er1Data.position;
+    Position er2 = game->er2Data.position;
+    
+    return distEucl(me.x, me.y, er1.x, er1.y) < dist_thresh  || distEucl(me.x, me.y, er2.x, er2.y)< dist_thresh;
 }

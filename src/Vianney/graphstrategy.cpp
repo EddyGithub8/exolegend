@@ -19,7 +19,7 @@ vector<int> BFSPruned(GameState *game)
 
     uint8_t i_index = square->i; // indice colonne selon la convention
     uint8_t j_index = square->j; // indice ligne selon la convention
-
+    game->gladiator->log("Case de depart (i:%d,j:%d)", i_index, j_index);
     int start_coord = i_index + j_index * 12;
     int end_coord;
 
@@ -40,14 +40,13 @@ vector<int> BFSPruned(GameState *game)
         int j = currentVertex / 12;
         q.pop();
         int *result = getCaseNeighboor(i, j, game);
-        game->gladiator->log("DEPTH : %d", depth);
         for (int i = 0; i < 4; ++i) // Parcourir tous les sommets adjacents du sommet courant
         {
 
             int adjacentVertex = result[i];
             int i_a = adjacentVertex % 12;
             int j_a = adjacentVertex / 12;
-            game->gladiator->log("case visitée :%d,%d", i_a, j_a);
+
             // Si un sommet adjacent n'a pas encore été visité, le marquer comme visité
             // et l'ajouter à la file
             if (adjacentVertex != 200)
@@ -64,6 +63,7 @@ vector<int> BFSPruned(GameState *game)
                     path_dict[adjacentVertex] = t;
                     if (h < min)
                     {
+                        min = h;
                         index_min = adjacentVertex;
                     }
                 }
@@ -73,7 +73,7 @@ vector<int> BFSPruned(GameState *game)
     }
     // trouve la case de plus faible cout
     end_coord = index_min;
-    game->gladiator->log("Position de la case de plus faible coût (i:%d,j:%d)", index_min % 12, index_min / 12);
+
     // trouve le chemin vers la case de plus faible cout
     vector<int> path;
     int current = end_coord;
@@ -84,7 +84,12 @@ vector<int> BFSPruned(GameState *game)
     }
     path.push_back(start_coord);
     reverse(path.begin(), path.end()); // Inverser le chemin car on l'a construit de la fin au début
-
+    game->gladiator->log("--------PATH------------");
+    // for (int &index : path)
+    // {
+    //     game->gladiator->log("Position de la case (i:%d,j:%d)", index % 12, index/12);
+    // }
+    game->gladiator->log("--------PATH------------");
     return path;
 }
 
@@ -92,10 +97,10 @@ int heuristic(const MazeSquare *sqr, GameState *game)
 {
     // si c'est proche du bord
     int h = 0;
-    uint32_t time = millis() / 1000; // temps en secondes
+    // uint32_t time = millis() / 1000; // temps en secondes
     int i = sqr->i;
     int j = sqr->j;
-    game->gladiator->log("TIME %d : ", time);
+    // game->gladiator->log("TIME %d : ", time);
 
     uint32_t time_thresh_init = 8; // temps à partir du quel il faut faire attention au shr
     uint32_t time_between_shrinking = 16;

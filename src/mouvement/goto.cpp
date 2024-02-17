@@ -9,7 +9,7 @@ void followPath(GameState *game)
 {
     Position current = game->myData.position;
     go_to(game->goal, current, game->gladiator);
-
+    
     if (distance(current, game->goal) <= THRESHOLD && game->count < game->simplified_coord_list.size)
     {
         game->goal = getSquareCoor(game->simplified_coord_list.path_coord[game->count].i, game->simplified_coord_list.path_coord[game->count].j, game->squareSize);

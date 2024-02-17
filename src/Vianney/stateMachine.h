@@ -24,4 +24,5 @@ public:
 
     void transition();
     void executePVP();
+    void switchState(State state);
 };

@@ -4,13 +4,23 @@
 #include "mouvement/goto.h"
 StateMachine::StateMachine(GameState *game) : game(game), currentState(State::ATTENTE) {}
 
+void StateMachine::switchState(State state) {
+    switch (state){
+        case State::RECHERCHE_FUSEE:
+            currentState = state;
+            new_missile(game);
+            break;
+        default: break;
+    }
+}
+
 void StateMachine::transition()
 {
     bool t_recherche_fusee = !game->gladiator->weapon->canLaunchRocket();
     bool t_ennemi_proche = ennemi_proche(game->gladiator);
     bool t_recherche_cible = true;
     bool t_tirer = true;
-    game->gladiator->log("Possède une fusée : %d", t_recherche_fusee);
+    game->gladiator->log("Chercheur une fusée : %d", t_recherche_fusee);
 
     switch (currentState)
     {
@@ -21,7 +31,7 @@ void StateMachine::transition()
         }
         if (t_recherche_fusee)
         {
-            currentState = State::RECHERCHE_FUSEE;
+            switchState(State::RECHERCHE_FUSEE);
         }
         else
         {
@@ -30,9 +40,9 @@ void StateMachine::transition()
         break;
 
     case State::RECHERCHE_FUSEE:
-        new_missile(game);
-        currentState = State::ATTENTE;
-
+        if(game->gladiator->weapon->canLaunchRocket()) // cc garde
+            currentState = State::ATTENTE;
+        followPath(game);
         break;
 
     case State::EXPLORATION:

@@ -85,10 +85,10 @@ vector<int> BFSPruned(GameState *game)
     path.push_back(start_coord);
     reverse(path.begin(), path.end()); // Inverser le chemin car on l'a construit de la fin au début
     game->gladiator->log("--------PATH------------");
-    // for (int &index : path)
-    // {
-    //     game->gladiator->log("Position de la case (i:%d,j:%d)", index % 12, index/12);
-    // }
+    for (int &index : path)
+    {
+        game->gladiator->log("Position de la case (i:%d,j:%d)", index % 12, index / 12);
+    }
     game->gladiator->log("--------PATH------------");
     return path;
 }
@@ -97,7 +97,7 @@ int heuristic(const MazeSquare *sqr, GameState *game)
 {
     // si c'est proche du bord
     int h = 0;
-    // uint32_t time = millis() / 1000; // temps en secondes
+    uint32_t time = millis() / 1000; // temps en secondes
     int i = sqr->i;
     int j = sqr->j;
     // game->gladiator->log("TIME %d : ", time);
@@ -107,15 +107,16 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     if (time > time_thresh_init)
     {
         int shrink_progress = (time - 8) / time_between_shrinking;
-        if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
-        {
-            game->gladiator->log("case a éviter en %d,%d", i, j);
-            h += 500;
-        }
+        game->gladiator->log("SCHRINK PROGRESS %d : ", shrink_progress);
+        // if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
+        // {
+        //     game->gladiator->log("case a eviter en %d,%d", i, j);
+        //     h += 500;
+        // }
     }
     const MazeSquare *sqri = game->gladiator->maze->getSquare(i, j);
     uint8_t possession = sqri->possession;
-    // si case vide 2.5
+
     switch (possession)
     {
     case 0: // case vide

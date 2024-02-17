@@ -34,7 +34,7 @@ bool shit = true;
 int f = 0;
 void loop()
 {
-    
+
     if (gladiator->game->isStarted())
     { // tester si un match à déjà commencer
         // code de votre stratégie

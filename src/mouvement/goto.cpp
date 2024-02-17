@@ -2,6 +2,7 @@
 #include "mouvement/movement.h"
 #include "Vianney/createPath.h"
 #include "Vianney/creategraph.h"
+#include "Vianney/graphstrategy.h"
 #include <vector>
 using namespace std;
 
@@ -21,6 +22,17 @@ void followPath(GameState *game)
 void new_missile(GameState *game)
 {
     std::vector<int> path = BFS(game);
+    game->coord_list.size = path.size();
+    for (int i = 0; i < game->coord_list.size; i++)
+    {
+        game->coord_list.path_coord[i].i = path[i] % 12;
+        game->coord_list.path_coord[i].j = path[i] / 12;
+    }
+    game->simplified_coord_list = createCommands(game->coord_list);
+}
+
+void new_mission(GameState *game){
+    std::vector<int> path = BFSPruned(game);
     game->coord_list.size = path.size();
     for (int i = 0; i < game->coord_list.size; i++)
     {

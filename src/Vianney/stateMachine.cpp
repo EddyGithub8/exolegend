@@ -2,7 +2,24 @@
 #include "GameData/GameData.h"
 #include <vector>
 #include "mouvement/goto.h"
+
 StateMachine::StateMachine(GameState *game) : game(game), currentState(State::ATTENTE) {}
+
+void StateMachine::switchState(State state) {
+    switch (state){
+        case State::RECHERCHE_FUSEE:
+            currentState = state;
+            game->count = 0;
+            new_missile(game);
+            break;
+        case State::EXPLORATION:
+            currentState = state;
+            game->count = 0;
+            new_missile(game);
+            break;
+        default: break;
+    }
+}
 
 void StateMachine::transition()
 {
@@ -10,7 +27,6 @@ void StateMachine::transition()
     bool t_ennemi_proche = ennemi_proche(game->gladiator);
     bool t_recherche_cible = true;
     bool t_tirer = true;
-    game->gladiator->log("Possède une fusée : %d", t_recherche_fusee);
 
     switch (currentState)
     {
@@ -21,24 +37,22 @@ void StateMachine::transition()
         }
         if (t_recherche_fusee)
         {
-            currentState = State::RECHERCHE_FUSEE;
+            switchState(State::RECHERCHE_FUSEE);
         }
         else
         {
-            currentState = State::EXPLORATION;
+            switchState(State::EXPLORATION);
         }
         break;
 
     case State::RECHERCHE_FUSEE:
-        new_missile(game);
-        currentState = State::ATTENTE;
-
+        if(game->gladiator->weapon->canLaunchRocket()) // cc garde
+            currentState = State::ATTENTE;
+        followPath(game);
         break;
 
     case State::EXPLORATION:
     {
-        game->count = 0;
-        std::vector<int> path = BFSPruned(game);
         followPath(game);
         if (t_recherche_cible)
         {

@@ -10,6 +10,15 @@
 
 using namespace std;
 
+// const MazeSquare* getBestSquare(){
+
+//     for(int i = 0; i < 12; ++i) {
+//         for(int j= 0; j < 12; ++j) {
+
+//         }
+//     }
+// }
+
 vector<int> BFSPruned(GameState *game)
 {
     // Marquer tous les sommets comme non visités
@@ -19,7 +28,7 @@ vector<int> BFSPruned(GameState *game)
 
     uint8_t i_index = square->i; // indice colonne selon la convention
     uint8_t j_index = square->j; // indice ligne selon la convention
-    game->gladiator->log("Case de depart (i:%d,j:%d)", i_index, j_index);
+    //game->gladiator->log("Case de depart (i:%d,j:%d)", i_index, j_index);
     int start_coord = i_index + j_index * 12;
     int end_coord;
 
@@ -31,7 +40,7 @@ vector<int> BFSPruned(GameState *game)
     int depth_goal = 50;                           // nombre de noeud à parcourir
     int depth = 1;
     int index_min;
-    int min = 500;
+    float min = 500;
     while (depth < depth_goal)
     {
         // Extraire un sommet de la file
@@ -55,16 +64,17 @@ vector<int> BFSPruned(GameState *game)
                 {
                     visited[adjacentVertex] = true;
                     q.push(adjacentVertex);
-                    tuple<int, int> t;
+                    tuple<int, float> t;
                     get<0>(t) = currentVertex;
                     const MazeSquare *sqr = game->gladiator->maze->getSquare(i_a, j_a);
-                    int h = heuristic(sqr, game); // on calcule les heuristiques lorsqu'on regarde les noeuds voisins sans les visiter
+                    float h = heuristic(sqr, game); // on calcule les heuristiques lorsqu'on regarde les noeuds voisins sans les visiter
                     get<1>(t) = h;
                     path_dict[adjacentVertex] = t;
                     if (h < min)
                     {
                         min = h;
                         index_min = adjacentVertex;
+                        game->gladiator->log("Case de depart (i:%d,j:%d) cout : %f", index_min%12, index_min/12,min);
                     }
                 }
             }
@@ -84,35 +94,36 @@ vector<int> BFSPruned(GameState *game)
     }
     path.push_back(start_coord);
     reverse(path.begin(), path.end()); // Inverser le chemin car on l'a construit de la fin au début
-    game->gladiator->log("--------PATH------------");
-    for (int &index : path)
-    {
-        game->gladiator->log("Position de la case (i:%d,j:%d)", index % 12, index / 12);
-    }
-    game->gladiator->log("--------PATH------------");
+    // game->gladiator->log("--------PATH------------");
+    // for (int &index : path)
+    // {
+    //     game->gladiator->log("Position de la case (i:%d,j:%d)", index % 12, index / 12);
+    // }
+    // game->gladiator->log("--------PATH------------");
     return path;
 }
 
-int heuristic(const MazeSquare *sqr, GameState *game)
+float heuristic(const MazeSquare *sqr, GameState *game)
 {
     // si c'est proche du bord
-    int h = 0;
+    float h = 0;
     uint32_t time = millis() / 1000; // temps en secondes
     int i = sqr->i;
     int j = sqr->j;
-    // game->gladiator->log("TIME %d : ", time);
-
-    uint32_t time_thresh_init = 8; // temps à partir du quel il faut faire attention au shr
-    uint32_t time_between_shrinking = 16;
-    if (time > time_thresh_init)
+    uint32_t time_up=time-game->start_time;
+    //game->gladiator->log("TIME up %d : ", time_up);
+    
+     // temps à partir du quel il faut faire attention au shr
+    uint32_t time_between_shrinking = 17;
+    if (time_up >( time_between_shrinking-2))
     {
-        int shrink_progress = (time - 8) / time_between_shrinking;
-        game->gladiator->log("SCHRINK PROGRESS %d : ", shrink_progress);
-        // if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
-        // {
-        //     game->gladiator->log("case a eviter en %d,%d", i, j);
-        //     h += 500;
-        // }
+        int shrink_progress = time_up / time_between_shrinking;
+        //game->gladiator->log("SCHRINK PROGRESS %d : ", shrink_progress);
+        if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
+        {
+            //game->gladiator->log("case a eviter en %d,%d", i, j);
+            h += 500;
+        }
     }
     const MazeSquare *sqri = game->gladiator->maze->getSquare(i, j);
     uint8_t possession = sqri->possession;
@@ -123,7 +134,7 @@ int heuristic(const MazeSquare *sqr, GameState *game)
         h += 3;
         break;
     case 1: // case team
-        h += 6;
+        h += 20;
         break;
     case 2: // case ennemi
         h += 1;
@@ -135,6 +146,8 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     {
         h += 500;
     }
-
+    h+=1/abs(i-game->myData.position.x);
+    h+=1/abs(j-game->myData.position.y);
+    game->gladiator->log("H sortie heuristique  : %f",h); 
     return h;
 }

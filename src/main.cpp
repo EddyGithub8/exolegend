@@ -24,7 +24,7 @@ void reset()
 {
     // fonction de reset:
     game->reset();
-
+    
     // initialisation de toutes vos variables avant le début d'un match
     game->goal = gladiator->robot->getData().position;
 }

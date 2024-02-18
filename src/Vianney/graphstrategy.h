@@ -4,4 +4,4 @@
 #include "GameData/GameData.h"
 
 std::vector<int> BFSPruned(GameState *game);
-int heuristic(const MazeSquare *sqr, GameState *game);
+float heuristic(const MazeSquare *sqr, GameState *game);

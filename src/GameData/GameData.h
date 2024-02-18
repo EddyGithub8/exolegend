@@ -1,6 +1,6 @@
 #pragma once
 #include "gladiator.h"
-#define max_parth_finder_size 24
+#define max_parth_finder_size 128
 
 struct coordonnees
 {

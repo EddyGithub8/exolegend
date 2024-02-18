@@ -18,7 +18,6 @@ void StateMachine::switchState(State state)
         new_missile(game);
         break;
     case State::EXPLORATION:
-        game->gladiator->log("IN EXPLORATION");
         game->count = 0;
         next_action = true;
         new_mission(game);
@@ -37,9 +36,9 @@ void StateMachine::transition()
     switch (currentState)
     {
     case State::ATTENTE:
-        if (t_ennemi_proche)
+        if (t_recherche_cible)
         {
-            currentState = State::PVP;
+            currentState = State::TIRER;
         }
         if (t_recherche_fusee)
         {
@@ -68,7 +67,7 @@ void StateMachine::transition()
         {
             currentState = State::RECHERCHE_CIBLE;
         }
-        else if (game->count == game->simplified_coord_list.size)
+        else if (game->count == game->coord_list.size)
         {
             currentState = State::ATTENTE;
         }

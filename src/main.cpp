@@ -27,6 +27,16 @@ void reset()
 
     // initialisation de toutes vos variables avant le début d'un match
     game->goal = gladiator->robot->getData().position;
+    liste.type = TYPE_DEPLACEMENT_IMMOBILE;
+    liste.fin = game->goal;
+    etat_automate_depl = INITIALISATION;
+    Serial.println("Game Start ! ");
+
+    // liste.type = TYPE_DEPLACEMENT_ROTATION;
+    // liste.fin.a = PI/2;
+    // // liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
+    // liste.fin.x = game->goal.x ; //+ 1./2. * gladiator->maze->getSquareSize();
+    // liste.fin.y = game->goal.y ;//- 2 *  gladiator->maze->getSquareSize();
 }
 Position current;
 uint8_t count = 0;
@@ -34,11 +44,16 @@ bool shit = true;
 int f = 0;
 void loop()
 {
-
     if (gladiator->game->isStarted())
     { // tester si un match à déjà commencer
         // code de votre stratégie
         game->Update();
+
+        if (TempsEchantionnage(TE_10MS))
+        {
+            calcul();
+        }
+        
         robot_state_machine->transition();
     }
 }

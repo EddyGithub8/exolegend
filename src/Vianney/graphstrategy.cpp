@@ -138,7 +138,7 @@ int heuristic(const MazeSquare *sqr, GameState *game)
 
     if(possession == 0)
         h += 200;
-    else if(game->myData.teamId)
+    else if(possession == game->myData.teamId)
         h -= 1000;
     else
         h += 300;

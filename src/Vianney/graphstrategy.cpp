@@ -7,6 +7,7 @@
 #include "graphstrategy.h"
 #include <unordered_map>
 #include <algorithm>
+#include "mouvement/movement.h"
 
 using namespace std;
 
@@ -134,30 +135,27 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     const MazeSquare *sqri = game->gladiator->maze->getSquare(i, j);
     uint8_t possession = sqri->possession;
 
-    switch (possession)
-    {
-    case 0: // case vide
-        h += 20;
-        break;
-    case 1: // case team
-        h += 1;
-        break;
-    case 2: // case ennemi
-        h += 30;
-        break;
-    default:
-        break;
-    }
-    if (abs(i + j * 12 - game->allyData.position.x + game->allyData.position.y * 12) < 1)
-    {
-        h -= 500;
-    }
 
-    float dx = abs(i-game->myData.position.x);
-    float dy = abs(j-game->myData.position.y);
+    if(possession == 0)
+        h += 200;
+    else if(game->myData.teamId)
+        h -= 1000;
+    else
+        h += 300;
+    // if (abs(i + j * 12 - game->allyData.position.x + game->allyData.position.y * 12) < 1)
+    // {
+    //     h -= 500;
+    // }
+
+    Position square = getSquareCoor(i, j, game->squareSize);
+
+    float dx = abs(square.x-game->myData.position.x);
+    float dy = abs(square.y-game->myData.position.y);
+
+
 
     if(dx >= 3 && dx <= 8)  h += 10;
     if(dy >= 3 && dy <= 8)  h += 10;
-
+    
     return h;
 }

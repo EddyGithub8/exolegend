@@ -159,7 +159,7 @@ void positionControl(Position targetPos, float dt)
         float dx = targetPos.x - currentPos.x;
         float dy = targetPos.y - currentPos.y;
         float d = sqrt(dx * dx + dy * dy);
-        float sens = 1;
+        //float sens = 1;
         if (d > erreurPos)
         {
             float rho = atan2(dy, dx);
@@ -170,16 +170,16 @@ void positionControl(Position targetPos, float dt)
             // consv = abs(consv) > vlimit ? (consv > 0 ? 1 : -1) * vlimit : consv;
 
             // Check if moving backward is more efficient
-            float angleDifference = reductionAngle(rho - currentPos.a);
-            if (abs(angleDifference) > PI / 2.)
-            {
-                //gladiator->log("angleDifference : %f >PI/2, dt : %f", angleDifference, dt);
-                // consv = -consv; // Move backward if turning more than 90 degrees
-                sens = -1;
-            }else{sens = 1;}
+            // float angleDifference = reductionAngle(rho - currentPos.a);
+            // if (abs(angleDifference) > PI / 2.)
+            // {
+            //     //gladiator->log("angleDifference : %f >PI/2, dt : %f", angleDifference, dt);
+            //     // consv = -consv; // Move backward if turning more than 90 degrees
+            //     sens = -1;
+            // }else{sens = 1;}
 
-            consvl = (consv - gladiator->robot->getRobotRadius() * consw)*sens; // GFA 3.6.2
-            consvr = (consv + gladiator->robot->getRobotRadius() * consw)*sens; // GFA 3.6.2
+            consvl = (consv - gladiator->robot->getRobotRadius() * consw); // GFA 3.6.2
+            consvr = (consv + gladiator->robot->getRobotRadius() * consw); // GFA 3.6.2
             
         }
         else

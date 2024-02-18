@@ -31,19 +31,19 @@ void StateMachine::transition()
 {
     bool t_recherche_fusee = !game->gladiator->weapon->canLaunchRocket();
     bool t_ennemi_proche = ennemi_proche(game);
-    bool t_recherche_cible = t_ennemi_proche && !t_recherche_fusee;
+    bool t_recherche_cible = !t_recherche_fusee;
 
     switch (currentState)
     {
     case State::ATTENTE:
         if (t_recherche_cible)
         {
-            currentState = State::TIRER;
+            currentState = State::RECHERCHE_CIBLE;
         }
-        if (t_recherche_fusee)
-        {
-            switchState(State::RECHERCHE_FUSEE);
-        }
+        // if (t_recherche_fusee)
+        // {
+        //     switchState(State::RECHERCHE_FUSEE);
+        // }
         else
         {
             switchState(State::EXPLORATION);
@@ -59,13 +59,9 @@ void StateMachine::transition()
     case State::EXPLORATION:
     {
         followPath(game);
-        if (t_ennemi_proche)
+        if (t_recherche_cible)
         {
-            currentState = State::PVP;
-        }
-        else if (t_recherche_cible)
-        {
-            currentState = State::RECHERCHE_CIBLE;
+            currentState = State::TIRER;
         }
         else if (game->count == game->coord_list.size)
         {
@@ -80,15 +76,9 @@ void StateMachine::transition()
         break;
 
     case State::RECHERCHE_CIBLE:
-        t_recherche_cible = false;
-        // if (t_tirer)
-        // {
-        //     currentState = State::TIRER;
-        // }
-        // else
-        {
-            currentState = State::EXPLORATION;
-        }
+        getTarget(game);
+        if(!game->gladiator->weapon->canLaunchRocket())
+            switchState(State::ATTENTE);
         break;
 
     case State::TIRER:

@@ -25,19 +25,20 @@ void getTarget(GameState *game)
     double alpha_ennemi2 = atan2(dy2, dx2);
 
     // calcul des dist eucli
-    float dist1 = sqrt(dx1 * dx1 + dy1 * dy1);
-    float dist2 = sqrt(dx2 * dx2 + dy2 * dy2);
+    float dist1 = sqrt(dx1 * dx1 + dy1 * dy1) + (game->er1Data.id == 0)*99999;
+    float dist2 = sqrt(dx2 * dx2 + dy2 * dy2) + (game->er2Data.id == 0)*99999;
     // float dista = sqrt(dxa * dxa + dya * dya);
 
     // on target le robot le plus proche sur lequel il n'y a pas de trajet
-    if (dist1 < dist2 && dist1 < 4 && alpha_allie != alpha_ennemi1)
+    if (dist1 < dist2)
     {
         go_to_angle(alpha_ennemi1, me.a, game);
     }
-    else if (dist2 < dist1 and dist2 < 4 && alpha_allie != alpha_ennemi2)
+    else if (dist2 < dist1)
     {
         go_to_angle(alpha_ennemi2, me.a, game);
     }
+
 }
 void go_to_angle(float cons_angle, float pos_angle, GameState *game)
 {
@@ -67,5 +68,7 @@ void go_to_angle(float cons_angle, float pos_angle, GameState *game)
 
     game->gladiator->control->setWheelSpeed(WheelAxis::RIGHT, consvr, false); // GFA 3.2.1
     game->gladiator->control->setWheelSpeed(WheelAxis::LEFT, consvl, false);
-    game->gladiator->weapon->launchRocket(); //  GFA 3.2.1
+    if(abs(cons_angle - pos_angle) < 0.1){
+        game->gladiator->weapon->launchRocket();
+    }
 }

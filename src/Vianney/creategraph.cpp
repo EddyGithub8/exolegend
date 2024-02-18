@@ -88,5 +88,6 @@ vector<int> BFS(GameState *game, bool rocket_man, int i_goal, int j_goal)
     }
     path.push_back(start_coord);
     reverse(path.begin(), path.end()); // Inverser le chemin car on l'a construit de la fin au début
+    game->gladiator->log("AAAA: %d, %d", path.back() % 12, int(path.back() / 12));
     return path;
 }

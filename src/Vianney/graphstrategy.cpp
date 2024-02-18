@@ -14,8 +14,8 @@ using namespace std;
 const MazeSquare* getBestSquare(GameState *game){
     int max = -5555;
     const MazeSquare* chosen_one = game->gladiator->maze->getSquare(6, 6);
-    for(int i = 1; i < 12; ++i) {
-        for(int j= 1; j < 12; ++j) {
+    for(int i = 0; i < 12; ++i) {
+        for(int j= 0; j < 12; ++j) {
             int heur = heuristic(game->gladiator->maze->getSquare(i, j), game);
             if(heur > max){
                 max = heur;
@@ -45,14 +45,15 @@ int heuristic(const MazeSquare *sqr, GameState *game)
         if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
         {
             //game->gladiator->log("case a eviter en %d,%d", i, j);
-            h -= 500000;
+            h -= 5000000;
         }
     }
     uint8_t possession = sqr->possession;
 
+    if(sqr->coin.value == 1) h += 100000;
 
     if(possession == 0)
-        h += 2000;
+        h += 1000;
     else if(possession == game->myData.teamId)
         h -= 1000;
     else
@@ -61,7 +62,7 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     // {
     //     h -= 500;
     // }
-    if(i == 0 && j == 0) h -= 99999;
+    if(i == 0 && j == 0) h -= 999999;
 
     Position square = getSquareCoor(i, j, game->squareSize);
 
@@ -69,9 +70,11 @@ int heuristic(const MazeSquare *sqr, GameState *game)
     float dy = abs(square.y-game->myData.position.y);
 
 
-    if(dx <= 0.1) h -= 8888888;
+    if(sqrt(dx*dx - dy*dy) <= 0.01) h -= 8888888;
     if(dx >= 0.3 && dx <= 1)  h += 30;
     if(dy >= 0.3 && dy <= 1)  h += 30;
+
+    if(sqrt(dx*dx - dy*dy) > 1.2) h -= 9875354;
     
     return h;
 }

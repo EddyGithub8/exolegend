@@ -17,7 +17,7 @@ uint32_t start_time;
 
 float kw = 3.f;
 float kv = 1.5f;
-float erreurPos = 0.07;
+float erreurPos = 0.02;
 
 // Constants for PID control
 const float Kp = 0.02; // Proportional gain
@@ -106,7 +106,7 @@ float trajectoire(float time, FuncType velocityProfile)
 
 void positionControl(Position targetPos, float dt)
 {
-    const float Threshold = 0.01f, toleranceAngle = 5 * PI/180; // Adjust as needed
+    const float Threshold = 0.07f, toleranceAngle = 5 * PI/180; // Adjust as needed
     static Position currentPos;
     float consvl = 0, consvr = 0;
     

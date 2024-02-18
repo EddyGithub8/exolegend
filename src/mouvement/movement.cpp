@@ -165,7 +165,7 @@ void positionControl(Position targetPos, float dt)
             float rho = atan2(dy, dx);
             float consw = kw * reductionAngle(rho - currentPos.a);
 
-            float consv = kv * d * pow(cos(reductionAngle(rho - currentPos.a)), 1);
+            float consv = kv * d * cos(reductionAngle(rho - currentPos.a));
             // consw = abs(consw) > wlimit ? (consw > 0 ? 1 : -1) * wlimit : consw;
             // consv = abs(consv) > vlimit ? (consv > 0 ? 1 : -1) * vlimit : consv;
 

@@ -24,7 +24,7 @@ public:
     RobotData er2Data;
 
     Position goal;
-    uint32_t start_time;
+    uint32_t start_time_heur;
     float squareSize;
 
     uint8_t count;

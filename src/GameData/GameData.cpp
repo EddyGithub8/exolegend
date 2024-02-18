@@ -14,7 +14,7 @@ void GameState::Update(){
 
 void GameState::reset(){
     myData = gladiator->robot->getData();
-    start_time= millis()/1000;
+    start_time_heur= millis()/1000;
     bool enn_init = true;
     for(int i = 0; i < 4; ++i){
         byte id = gladiator->game->getPlayingRobotsId().ids[i];

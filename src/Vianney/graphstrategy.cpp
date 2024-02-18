@@ -10,14 +10,20 @@
 
 using namespace std;
 
-// const MazeSquare* getBestSquare(){
-
-//     for(int i = 0; i < 12; ++i) {
-//         for(int j= 0; j < 12; ++j) {
-
-//         }
-//     }
-// }
+const MazeSquare* getBestSquare(GameState *game){
+    int max = -5555;
+    const MazeSquare* chosen_one = game->gladiator->maze->getSquare(6, 6);
+    for(int i = 0; i < 12; ++i) {
+        for(int j= 0; j < 12; ++j) {
+            int heur = heuristic(game->gladiator->maze->getSquare(i, j), game);
+            if(heur > max){
+                max = heur;
+                chosen_one = game->gladiator->maze->getSquare(i, j);
+            }  
+        }
+    }
+    return chosen_one;
+}
 
 vector<int> BFSPruned(GameState *game)
 {
@@ -103,14 +109,14 @@ vector<int> BFSPruned(GameState *game)
     return path;
 }
 
-float heuristic(const MazeSquare *sqr, GameState *game)
+int heuristic(const MazeSquare *sqr, GameState *game)
 {
     // si c'est proche du bord
-    float h = 0;
+    int h = 0;
     uint32_t time = millis() / 1000; // temps en secondes
     int i = sqr->i;
     int j = sqr->j;
-    uint32_t time_up=time-game->start_time;
+    uint32_t time_up=time-game->start_time_heur;
     //game->gladiator->log("TIME up %d : ", time_up);
     
      // temps à partir du quel il faut faire attention au shr
@@ -122,7 +128,7 @@ float heuristic(const MazeSquare *sqr, GameState *game)
         if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
         {
             //game->gladiator->log("case a eviter en %d,%d", i, j);
-            h += 500;
+            h -= 500;
         }
     }
     const MazeSquare *sqri = game->gladiator->maze->getSquare(i, j);
@@ -131,23 +137,27 @@ float heuristic(const MazeSquare *sqr, GameState *game)
     switch (possession)
     {
     case 0: // case vide
-        h += 3;
-        break;
-    case 1: // case team
         h += 20;
         break;
-    case 2: // case ennemi
+    case 1: // case team
         h += 1;
+        break;
+    case 2: // case ennemi
+        h += 30;
         break;
     default:
         break;
     }
     if (abs(i + j * 12 - game->allyData.position.x + game->allyData.position.y * 12) < 1)
     {
-        h += 500;
+        h -= 500;
     }
-    h+=1/abs(i-game->myData.position.x);
-    h+=1/abs(j-game->myData.position.y);
-    game->gladiator->log("H sortie heuristique  : %f",h); 
+
+    float dx = abs(i-game->myData.position.x);
+    float dy = abs(j-game->myData.position.y);
+
+    if(dx >= 3 && dx <= 8)  h += 10;
+    if(dy >= 3 && dy <= 8)  h += 10;
+
     return h;
 }

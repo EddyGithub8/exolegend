@@ -45,6 +45,6 @@ void getTarget(GameState *game)
     cons.a = 0;
     pos.a = me.a;
     // go_to(cons, pos, game->gladiator);
-    liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
-    liste.fin = pos;
+    // liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
+    // liste.fin = pos;
 }

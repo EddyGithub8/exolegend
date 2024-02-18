@@ -7,18 +7,15 @@
 using namespace std;
 
 void followPath(GameState *game)
-{
-    Position current = game->gladiator->robot->getData().position;
-    // go_to(game->goal, current, game->gladiator);
-    liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
-    liste.fin = game->goal;
-
+{    
     if (next_action && game->count < game->simplified_coord_list.size)
-    {
+    {   
         next_action = false;
         game->goal = getSquareCoor(game->simplified_coord_list.path_coord[game->count].i, game->simplified_coord_list.path_coord[game->count].j, game->squareSize);
         game->gladiator->log("i: %d | j: %d", game->simplified_coord_list.path_coord[game->count].i, game->simplified_coord_list.path_coord[game->count].j);
         game->count++;
+        liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
+        liste.fin = game->goal;
     }
 }
 
@@ -35,7 +32,8 @@ void new_missile(GameState *game)
 }
 
 void new_mission(GameState *game){
-    std::vector<int> path = BFSPruned(game);
+    const MazeSquare* chosen = getBestSquare(game);
+    std::vector<int> path = BFS(game, false, chosen->i, chosen->j);
     game->coord_list.size = path.size();
     for (int i = 0; i < game->coord_list.size; i++)
     {

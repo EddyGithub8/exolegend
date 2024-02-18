@@ -30,7 +30,6 @@ void reset()
     liste.type = TYPE_DEPLACEMENT_IMMOBILE;
     liste.fin = game->goal;
     etat_automate_depl = INITIALISATION;
-    Serial.println("Game Start ! ");
 
     // liste.type = TYPE_DEPLACEMENT_ROTATION;
     // liste.fin.a = PI/2;

@@ -124,17 +124,17 @@ void positionControl(Position targetPos, float dt)
         etat_automate_depl = GO_TO_POS;
         float error = getDistance(currentPos, targetPos);
         if(error < Threshold){
-            Serial.println("case INITIALISATION : etat_automate_depl = ROTATION");
+
             etat_automate_depl = ROTATION;
             float distance = 2. * gladiator->robot->getRobotRadius() * abs(targetPos.a);
             trajRotation = fnVitesse2(distance);
 
         }else{
-            Serial.println("case INITIALISATION : etat_automate_depl = GO_TO_POS");
+
             traj = fnVitesse2(getDistance(currentPos, targetPos));
         }
         
-        gladiator->log("Position targetPos.x = %f, targetPos.y = %f, targetPos.a = %f", targetPos.x, targetPos.y, targetPos.a);
+        
         
         start_time = millis();
     }
@@ -192,7 +192,6 @@ void positionControl(Position targetPos, float dt)
         {
             // Serial.println("case GO_TO_POS : etat_automate_depl = ROTATION");
             // etat_automate_depl = ROTATION;
-            Serial.println("case GO_TO_POS : etat_automate_depl = ARRET");
             etat_automate_depl = ARRET;
         }
 
@@ -220,7 +219,7 @@ void positionControl(Position targetPos, float dt)
 
             // Check if the correction is complete
             if (abs(angleDifference) <= toleranceAngle) {
-                gladiator->log("case ROTATION : etat_automate_depl = ARRET, angleDifference : %f", angleDifference);
+                
                 etat_automate_depl = ARRET;
                 consvr = 0;
                 consvl = 0;
@@ -229,7 +228,6 @@ void positionControl(Position targetPos, float dt)
         break;
     case ARRET:
     {
-        gladiator->log("case ARRET: finMvtElem %d\n", finMvtElem);
         finMvtElem = true;
         etat_automate_depl = INITIALISATION;
         consvr = 0;
@@ -272,7 +270,6 @@ void calcul(void)
         positionControl(liste.fin, dt);
         if (finMvtElem)
         {
-            Serial.println("Fin mouvement TYPE_DEPLACEMENT_LIGNE_DROITE");
             liste.type = (TYPE_MOUVEMENT_SUIVANT);
             finMvtElem = false;
             next_action = true;
@@ -284,7 +281,6 @@ void calcul(void)
         positionControl(liste.fin, dt);
         if (finMvtElem)
         {
-            Serial.println("Fin mouvement TYPE_DEPLACEMENT_ROTATION");
             liste.type = (TYPE_MOUVEMENT_SUIVANT);
             finMvtElem = false;
             next_action = true;

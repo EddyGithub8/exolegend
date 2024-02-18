@@ -53,7 +53,6 @@ vector<int> BFS(GameState *game, bool rocket_man, int i_goal, int j_goal)
         {
             if (sq->i == i_goal && sq->j == j_goal)
             {
-                game->gladiator->log("CASE OBJECTIF TROUVEE en %d,%d", i, j);
                 end_coord = currentVertex;
                 while (!q.empty())
                 {

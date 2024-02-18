@@ -16,13 +16,13 @@ FuncType trajRotation;
 uint32_t start_time;
 
 float kw = 3.f;
-float kv = 1.1f;
+float kv = 1.5f;
 float erreurPos = 0.07;
 
 // Constants for PID control
 const float Kp = 0.02; // Proportional gain
 const float Ki = 0;    // Integral gain
-const float Kd = 0.08; // Derivative gain
+const float Kd = 0.1; // Derivative gain
 
 // Function to calculate PID control output
 float calculatePID(float error, float dt)
@@ -119,7 +119,7 @@ void positionControl(Position targetPos, float dt)
     {
         ta = v_max / acc_max;
         d_max = v_max * v_max / acc_max;
-        // currentPos = gladiator->robot->getData().position;
+        currentPos = gladiator->robot->getData().position;
     
         etat_automate_depl = GO_TO_POS;
         float error = getDistance(currentPos, targetPos);
@@ -159,27 +159,27 @@ void positionControl(Position targetPos, float dt)
         float dx = targetPos.x - currentPos.x;
         float dy = targetPos.y - currentPos.y;
         float d = sqrt(dx * dx + dy * dy);
-        float sens = 1;
+        //float sens = 1;
         if (d > erreurPos)
         {
             float rho = atan2(dy, dx);
             float consw = kw * reductionAngle(rho - currentPos.a);
 
-            float consv = kv * d * pow(cos(reductionAngle(rho - currentPos.a)), 1);
+            float consv = kv * d * cos(reductionAngle(rho - currentPos.a));
             // consw = abs(consw) > wlimit ? (consw > 0 ? 1 : -1) * wlimit : consw;
             // consv = abs(consv) > vlimit ? (consv > 0 ? 1 : -1) * vlimit : consv;
 
             // Check if moving backward is more efficient
-            float angleDifference = reductionAngle(rho - currentPos.a);
-            if (abs(angleDifference) > PI / 2.)
-            {
-                //gladiator->log("angleDifference : %f >PI/2, dt : %f", angleDifference, dt);
-                // consv = -consv; // Move backward if turning more than 90 degrees
-                sens = -1;
-            }else{sens = 1;}
+            // float angleDifference = reductionAngle(rho - currentPos.a);
+            // if (abs(angleDifference) > PI / 2.)
+            // {
+            //     //gladiator->log("angleDifference : %f >PI/2, dt : %f", angleDifference, dt);
+            //     // consv = -consv; // Move backward if turning more than 90 degrees
+            //     sens = -1;
+            // }else{sens = 1;}
 
-            consvl = (consv - gladiator->robot->getRobotRadius() * consw)*sens; // GFA 3.6.2
-            consvr = (consv + gladiator->robot->getRobotRadius() * consw)*sens; // GFA 3.6.2
+            consvl = (consv - gladiator->robot->getRobotRadius() * consw); // GFA 3.6.2
+            consvr = (consv + gladiator->robot->getRobotRadius() * consw); // GFA 3.6.2
             
         }
         else
@@ -255,8 +255,8 @@ void calcul(void)
     case (TYPE_END_GAME):
     {
         // Arret
-        break;
-    }
+
+    }break;
     case (TYPE_DEPLACEMENT_IMMOBILE):
     {
         // cmdD = Asser_Pos_MotD(roue_drt_init);
@@ -264,8 +264,8 @@ void calcul(void)
         // write_PWMD(cmdD);
         // write_PWMG(cmdG);
 
-        break;
-    }
+        
+    }break;
     case (TYPE_DEPLACEMENT_LIGNE_DROITE):
     {
         float dt = (millis() - start_time) * 0.001f;
@@ -277,8 +277,7 @@ void calcul(void)
             finMvtElem = false;
             next_action = true;
         }
-        break;
-    }
+    }break;
     case (TYPE_DEPLACEMENT_ROTATION):
     {
         float dt = (millis() - start_time) * 0.001f;
@@ -290,8 +289,8 @@ void calcul(void)
             finMvtElem = false;
             next_action = true;
         }
-        break;
-    }
+        
+    }break;
     case (TYPE_DEPLACEMENT_X_Y_THETA):
     {
         // X_Y_Theta(liste.x, liste.y, liste.theta, liste.sens, VMAX, AMAX);
@@ -303,8 +302,8 @@ void calcul(void)
         //     //writeStructInCAN(DATArobot);
 
         // }
-        break;
-    }
+        
+    }break;
     case (TYPE_DEPLACEMENT_RAYON_COURBURE):
     {
         // Rayon_De_Courbure(liste.rayon, liste.theta_ray, VMAX, AMAX, liste.sens, DMAX);
@@ -315,22 +314,22 @@ void calcul(void)
         //     //remplirStruct(DATArobot,INSTRUCTION_END_MOTEUR, 2, (Message_Fin_Mouvement&0xFF), ((Message_Fin_Mouvement>>8)&0xFF),0,0,0,0,0,0);
         //     //writeStructInCAN(DATArobot);
         // }
-        break;
-    }
+        
+    }break;
 
     case TYPE_INIT_STOP:
     {
         liste.type = TYPE_STOP;
-        break;
-    }
+        
+    }break;
     case TYPE_STOP:
     {
-        break;
-    }
+        
+    }break;
     default:
     {
-        break;
-    }
+        
+    }break;
     }
 
     if (liste.type == TYPE_MOUVEMENT_SUIVANT)

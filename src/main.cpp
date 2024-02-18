@@ -24,7 +24,7 @@ void reset()
 {
     // fonction de reset:
     game->reset();
-    
+    robot_state_machine->currentState = StateMachine::State::ATTENTE;
     // initialisation de toutes vos variables avant le début d'un match
     game->goal = gladiator->robot->getData().position;
     liste.type = TYPE_DEPLACEMENT_IMMOBILE;
@@ -38,10 +38,6 @@ void reset()
     // liste.fin.x = game->goal.x ; //+ 1./2. * gladiator->maze->getSquareSize();
     // liste.fin.y = game->goal.y ;//- 2 *  gladiator->maze->getSquareSize();
 }
-Position current;
-uint8_t count = 0;
-bool shit = true;
-int f = 0;
 void loop()
 {
     if (gladiator->game->isStarted())

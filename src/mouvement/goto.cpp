@@ -13,9 +13,12 @@ void followPath(GameState *game)
         next_action = false;
         game->goal = getSquareCoor(game->simplified_coord_list.path_coord[game->count].i, game->simplified_coord_list.path_coord[game->count].j, game->squareSize);
         game->gladiator->log("i: %d | j: %d", game->simplified_coord_list.path_coord[game->count].i, game->simplified_coord_list.path_coord[game->count].j);
+        game->gladiator->log("x: %f | y: %f", game->goal.x, game->goal.y);
         game->count++;
-        liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
+        
         liste.fin = game->goal;
+        liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
+        
     }
 }
 

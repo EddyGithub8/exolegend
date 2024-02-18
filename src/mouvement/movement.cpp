@@ -50,6 +50,12 @@ Position getSquareCoor(uint8_t i, uint8_t j, float squareSize)
     return coor;
 }
 
+void getCoorInSquare(uint8_t &i, uint8_t &j, Position coor){
+    float squareSize = gladiator->maze->getSquareSize();
+    i  = coor.x/squareSize - 0.5;
+    j  = coor.y/squareSize - 0.5;
+}
+
 float getDistance(const Position &p1, const Position &p2)
 {
     return sqrt(pow((p1.x - p2.x), 2) + pow((p1.y - p2.y), 2));

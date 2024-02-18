@@ -24,7 +24,7 @@ void reset()
 {
     // fonction de reset:
     game->reset();
-    
+    robot_state_machine->currentState = robot_state_machine->State::ATTENTE;
     // initialisation de toutes vos variables avant le début d'un match
     game->goal = gladiator->robot->getData().position;
     liste.type = TYPE_DEPLACEMENT_IMMOBILE;

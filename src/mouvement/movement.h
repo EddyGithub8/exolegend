@@ -55,6 +55,7 @@ extern bool finMvtElem, next_action;
 
 Position getSquareCoor(const MazeSquare *square, float squareSize);
 Position getSquareCoor(uint8_t i, uint8_t j, float squareSize);
+void getCoorInSquare(uint8_t &i, uint8_t &j, Position coor);
 float getDistance(const Position &p1, const Position &p2);
 double reductionAngle(double x);
 

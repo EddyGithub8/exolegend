@@ -7,19 +7,33 @@
 #include "graphstrategy.h"
 #include <unordered_map>
 #include <algorithm>
-
+#include "mouvement/movement.h"
 using namespace std;
 
-const MazeSquare* getBestSquare(GameState *game){
-    int max = -5555;
-    const MazeSquare* chosen_one = game->gladiator->maze->getSquare(6, 6);
-    for(int i = 0; i < 12; ++i) {
-        for(int j= 0; j < 12; ++j) {
-            int heur = heuristic(game->gladiator->maze->getSquare(i, j), game);
-            if(heur > max){
-                max = heur;
-                chosen_one = game->gladiator->maze->getSquare(i, j);
-            }  
+const MazeSquare *getBestSquare(GameState *game)
+{
+    int max = 20;
+    const MazeSquare *chosen_one = game->gladiator->maze->getSquare(6, 6);
+    uint8_t our_i, our_j;
+    getCoorInSquare(our_i, our_j, game->gladiator->robot->getData().position);
+    uint8_t view = 2;
+    game->gladiator->log("getBestSquare, our_i : %d, our_j : %d", our_i, our_j);
+    for (int i = (our_i - view); i < (our_i + view); i++)
+    {
+        if (i >= 0 && i < 12)
+        {
+            for (int j = (our_j - view); j < (our_j - view); j++)
+            {
+                if (j >= 0 && j < 12)
+                {
+                    int heur = heuristic(game->gladiator->maze->getSquare(i, j), game);
+                    if (heur >= max)
+                    {
+                        max = heur;
+                        chosen_one = game->gladiator->maze->getSquare(i, j);
+                    }
+                }
+            }
         }
     }
     return chosen_one;
@@ -34,7 +48,7 @@ vector<int> BFSPruned(GameState *game)
 
     uint8_t i_index = square->i; // indice colonne selon la convention
     uint8_t j_index = square->j; // indice ligne selon la convention
-    //game->gladiator->log("Case de depart (i:%d,j:%d)", i_index, j_index);
+    // game->gladiator->log("Case de depart (i:%d,j:%d)", i_index, j_index);
     int start_coord = i_index + j_index * 12;
     int end_coord;
 
@@ -80,7 +94,7 @@ vector<int> BFSPruned(GameState *game)
                     {
                         min = h;
                         index_min = adjacentVertex;
-                        game->gladiator->log("Case de depart (i:%d,j:%d) cout : %f", index_min%12, index_min/12,min);
+                        game->gladiator->log("Case de depart (i:%d,j:%d) cout : %f", index_min % 12, index_min / 12, min);
                     }
                 }
             }
@@ -113,21 +127,21 @@ int heuristic(const MazeSquare *sqr, GameState *game)
 {
     // si c'est proche du bord
     int h = 0;
-    uint32_t time = millis() / 1000; // temps en secondes
+    float time = millis() / 1000.; // temps en secondes
     int i = sqr->i;
     int j = sqr->j;
-    uint32_t time_up=time-game->start_time_heur;
-    //game->gladiator->log("TIME up %d : ", time_up);
-    
-     // temps à partir du quel il faut faire attention au shr
-    uint32_t time_between_shrinking = 17;
-    if (time_up >( time_between_shrinking-2))
+    float time_up = time - game->start_time_heur;
+    // game->gladiator->log("TIME up %d : ", time_up);
+
+    // temps à partir du quel il faut faire attention au shr
+    float time_between_shrinking = 17.;
+    if (time_up > (time_between_shrinking - 2))
     {
         int shrink_progress = time_up / time_between_shrinking;
-        //game->gladiator->log("SCHRINK PROGRESS %d : ", shrink_progress);
+        // game->gladiator->log("SCHRINK PROGRESS %d : ", shrink_progress);
         if (i <= shrink_progress || (12 - i) <= shrink_progress || j <= shrink_progress || (12 - j) <= shrink_progress)
         {
-            //game->gladiator->log("case a eviter en %d,%d", i, j);
+            // game->gladiator->log("case a eviter en %d,%d", i, j);
             h -= 500;
         }
     }
@@ -153,11 +167,13 @@ int heuristic(const MazeSquare *sqr, GameState *game)
         h -= 500;
     }
 
-    float dx = abs(i-game->myData.position.x);
-    float dy = abs(j-game->myData.position.y);
+    float dx = abs(i - game->myData.position.x);
+    float dy = abs(j - game->myData.position.y);
 
-    if(dx >= 3 && dx <= 8)  h += 10;
-    if(dy >= 3 && dy <= 8)  h += 10;
+    if (dx >= 3 && dx <= 8)
+        h += 10;
+    if (dy >= 3 && dy <= 8)
+        h += 10;
 
     return h;
 }

@@ -27,24 +27,45 @@ void getTarget(GameState *game)
     // calcul des dist eucli
     float dist1 = sqrt(dx1 * dx1 + dy1 * dy1);
     float dist2 = sqrt(dx2 * dx2 + dy2 * dy2);
-    float dista = sqrt(dxa * dxa + dya * dya);
+    // float dista = sqrt(dxa * dxa + dya * dya);
 
     // on target le robot le plus proche sur lequel il n'y a pas de trajet
-    Position *ennemy;
     if (dist1 < dist2 && dist1 < 4 && alpha_allie != alpha_ennemi1)
     {
-        ennemy = &er1;
+        go_to_angle(alpha_ennemi1, me.a, game);
     }
     else if (dist2 < dist1 and dist2 < 4 && alpha_allie != alpha_ennemi2)
     {
-        ennemy = &er2;
+        go_to_angle(alpha_ennemi2, me.a, game);
+    }
+}
+void go_to_angle(float cons_angle, float pos_angle, GameState *game)
+{
+    double consvl, consvr;
+    const float K = 0.9;
+    float diff_angle = reductionAngle(cons_angle - pos_angle);
+    if (abs(diff_angle) > 1 / 60)
+    {
+        // if(diff_angle > 0){
+        //     consvl = -0.3;
+        //     consvr = 0.3;
+        // }else{
+        //     consvl = 0.3;
+        //     consvr = -0.3;
+        // }
+        consvl = -K * diff_angle;
+        consvr = K * diff_angle;
+
+        consvl = abs(consvl) > 0.3 ? (consvl > 0 ? 0.3 : -0.3) : consvl;
+        consvr = abs(consvr) > 0.3 ? (consvr > 0 ? 0.3 : -0.3) : consvr;
+    }
+    else
+    {
+        consvr = 0;
+        consvl = 0;
     }
 
-    Position cons;
-    Position pos;
-    cons.a = 0;
-    pos.a = me.a;
-    // go_to(cons, pos, game->gladiator);
-    // liste.type = TYPE_DEPLACEMENT_LIGNE_DROITE;
-    // liste.fin = pos;
+    game->gladiator->control->setWheelSpeed(WheelAxis::RIGHT, consvr, false); // GFA 3.2.1
+    game->gladiator->control->setWheelSpeed(WheelAxis::LEFT, consvl, false);
+    game->gladiator->weapon->launchRocket(); //  GFA 3.2.1
 }

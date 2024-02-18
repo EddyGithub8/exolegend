@@ -1,6 +1,8 @@
 // #include "agressivestrat.h"
 // #include "Sparta/melee.h"
-// #include "mouvement/goto.h"
+// #include "mouvement/movement.h"
+// #include "creategraph.h"
+// #include "createpath.h"
 // #include <vector>
 // using namespace std;
 // float distEucl(int ia, int ja, int ib, int jb)
@@ -45,14 +47,19 @@
 //         float dxa = ally.x - me.x;
 //         float dya = ally.y - me.y;
 //         double alpha_allie = atan2(dya, dxa);
-//         go_to(cons, pos, game->gladiator);
+//         Position cons;
+//         Position pos;
+//         cons.x = me.x;
+//         cons.y = me.y;
+//         cons.a = alpha_allie + PI;
+//         go_to(cons, me);
 //     }
 //     if (distEucl(me.x, me.y, ennemy->x, ennemy->y) < 1.2)
 //     {
 //         SpartanMode(game);
 //     }
 
-//     std::vector<int> path = BFS(game, false, ennemy->i, ennemy->j);
+//     std::vector<int> path = BFS(game, false, ennemy->x, ennemy->y);
 //     game->coord_list.size = path.size();
 //     for (int i = 0; i < game->coord_list.size; i++)
 //     {

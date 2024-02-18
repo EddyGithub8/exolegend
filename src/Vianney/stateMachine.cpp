@@ -3,24 +3,28 @@
 #include <vector>
 #include "mouvement/goto.h"
 #include "mouvement/movement.h"
+#include "rocket.h"
 
 StateMachine::StateMachine(GameState *game) : game(game), currentState(State::ATTENTE) {}
 
-void StateMachine::switchState(State state) {
+void StateMachine::switchState(State state)
+{
     currentState = state;
-    switch (state){
-        case State::RECHERCHE_FUSEE:
-            game->count = 0;
-            next_action = true;
-            new_missile(game);
-            break;
-        case State::EXPLORATION:
-            game->gladiator->log("IN EXPLORATION");
-            game->count = 0;
-            next_action = true;
-            new_mission(game);
-            break;
-        default: break;
+    switch (state)
+    {
+    case State::RECHERCHE_FUSEE:
+        game->count = 0;
+        next_action = true;
+        new_missile(game);
+        break;
+    case State::EXPLORATION:
+        game->gladiator->log("IN EXPLORATION");
+        game->count = 0;
+        next_action = true;
+        new_mission(game);
+        break;
+    default:
+        break;
     }
 }
 
@@ -48,7 +52,7 @@ void StateMachine::transition()
         break;
 
     case State::RECHERCHE_FUSEE:
-        if(game->gladiator->weapon->canLaunchRocket()) // cc garde
+        if (game->gladiator->weapon->canLaunchRocket()) // cc garde
             currentState = State::ATTENTE;
         followPath(game);
         break;
@@ -56,12 +60,15 @@ void StateMachine::transition()
     case State::EXPLORATION:
     {
         followPath(game);
-        if (t_ennemi_proche)  {
+        if (t_ennemi_proche)
+        {
             currentState = State::PVP;
-        }else if (t_recherche_cible)  {
+        }
+        else if (t_recherche_cible)
+        {
             currentState = State::RECHERCHE_CIBLE;
         }
-        else if(game->count == game->simplified_coord_list.size)
+        else if (game->count == game->simplified_coord_list.size)
         {
             currentState = State::ATTENTE;
         }
@@ -86,7 +93,7 @@ void StateMachine::transition()
         break;
 
     case State::TIRER:
-        game->gladiator->weapon->launchRocket();
+        getTarget(game);
         currentState = State::ATTENTE;
         break;
     }

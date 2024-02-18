@@ -5,7 +5,7 @@ using FuncType = std::function<float(float)>;
 struct Ordre_deplacement liste;
 bool finMvtElem = false, next_action = true;
 
-float acc_max = 0.8;
+float acc_max = 0.85;
 float v_max = 0.8;
 float ta;
 float d_max;
@@ -16,7 +16,7 @@ FuncType trajRotation;
 uint32_t start_time;
 
 float kw = 3.f;
-float kv = 0.75f;
+float kv = 1.5f;
 float erreurPos = 0.07;
 
 // Constants for PID control
@@ -119,20 +119,20 @@ void positionControl(Position targetPos, float dt)
     {
         ta = v_max / acc_max;
         d_max = v_max * v_max / acc_max;
-        // currentPos = gladiator->robot->getData().position;
+        currentPos = gladiator->robot->getData().position;
     
         etat_automate_depl = GO_TO_POS;
-        // float error = getDistance(currentPos, targetPos);
-        // if(error < Threshold){
-        //     Serial.println("case INITIALISATION : etat_automate_depl = ROTATION");
-        //     etat_automate_depl = ROTATION;
-        //     float distance = 2. * gladiator->robot->getRobotRadius() * abs(targetPos.a);
-        //     trajRotation = fnVitesse2(distance);
+        float error = getDistance(currentPos, targetPos);
+        if(error < Threshold){
+            Serial.println("case INITIALISATION : etat_automate_depl = ROTATION");
+            etat_automate_depl = ROTATION;
+            float distance = 2. * gladiator->robot->getRobotRadius() * abs(targetPos.a);
+            trajRotation = fnVitesse2(distance);
 
-        // }else{
+        }else{
             Serial.println("case INITIALISATION : etat_automate_depl = GO_TO_POS");
             traj = fnVitesse2(getDistance(currentPos, targetPos));
-        // }
+        }
         
         gladiator->log("Position targetPos.x = %f, targetPos.y = %f, targetPos.a = %f", targetPos.x, targetPos.y, targetPos.a);
         
@@ -201,32 +201,32 @@ void positionControl(Position targetPos, float dt)
         consvr += pidOutput;
     }
     break;
-    // case ROTATION: {
-    //         // Generate trajectory based on desired position
-    //         float traject = 1.5*trajectoire(dt, trajRotation);
-    //         float theta_diff = traject/(2*gladiator->robot->getRobotRadius());
-    //         // currentPos = gladiator->robot->getData().position; <
-    //         // Calculate the angular difference between the target and current orientation
-    //         float angleDifference = theta_diff + reductionAngle(targetPos.a - currentPos.a);
-    //         float correctionSpeed = calculatePID(angleDifference, dt);
-    //         // float pidOutput = calculatePID(angleDifference, dt);
-    //         // Apply the correction speeds to the wheels
-    //         consvl = correctionSpeed;
-    //         consvr = -correctionSpeed;
+    case ROTATION: {
+            // Generate trajectory based on desired position
+            float traject = 1.5*trajectoire(dt, trajRotation);
+            float theta_diff = traject/(2*gladiator->robot->getRobotRadius());
+            // currentPos = gladiator->robot->getData().position; <
+            // Calculate the angular difference between the target and current orientation
+            float angleDifference = theta_diff + reductionAngle(targetPos.a - currentPos.a);
+            float correctionSpeed = calculatePID(angleDifference, dt);
+            // float pidOutput = calculatePID(angleDifference, dt);
+            // Apply the correction speeds to the wheels
+            consvl = correctionSpeed;
+            consvr = -correctionSpeed;
 
-    //         //gladiator->log("angleDifference : %f,dt : %f, correctionSpeed : %f, consvl : %f, consvr : %f", angleDifference, dt, correctionSpeed, consvl, consvr);
-    //         // consvl += pidOutput;
-    //         // consvr -= pidOutput;
+            //gladiator->log("angleDifference : %f,dt : %f, correctionSpeed : %f, consvl : %f, consvr : %f", angleDifference, dt, correctionSpeed, consvl, consvr);
+            // consvl += pidOutput;
+            // consvr -= pidOutput;
 
-    //         // Check if the correction is complete
-    //         if (abs(angleDifference) <= toleranceAngle) {
-    //             gladiator->log("case ROTATION : etat_automate_depl = ARRET, angleDifference : %f", angleDifference);
-    //             etat_automate_depl = ARRET;
-    //             consvr = 0;
-    //             consvl = 0;
-    //         }
-    //     }
-    //     break;
+            // Check if the correction is complete
+            if (abs(angleDifference) <= toleranceAngle) {
+                gladiator->log("case ROTATION : etat_automate_depl = ARRET, angleDifference : %f", angleDifference);
+                etat_automate_depl = ARRET;
+                consvr = 0;
+                consvl = 0;
+            }
+        }
+        break;
     case ARRET:
     {
         gladiator->log("case ARRET: finMvtElem %d\n", finMvtElem);
@@ -278,19 +278,19 @@ void calcul(void)
             next_action = true;
         }
     }break;
-    // case (TYPE_DEPLACEMENT_ROTATION):
-    // {
-    //     float dt = (millis() - start_time) * 0.001f;
-    //     positionControl(liste.fin, dt);
-    //     if (finMvtElem)
-    //     {
-    //         Serial.println("Fin mouvement TYPE_DEPLACEMENT_ROTATION");
-    //         liste.type = (TYPE_MOUVEMENT_SUIVANT);
-    //         finMvtElem = false;
-    //         next_action = true;
-    //     }
-    //     break;
-    // }
+    case (TYPE_DEPLACEMENT_ROTATION):
+    {
+        float dt = (millis() - start_time) * 0.001f;
+        positionControl(liste.fin, dt);
+        if (finMvtElem)
+        {
+            Serial.println("Fin mouvement TYPE_DEPLACEMENT_ROTATION");
+            liste.type = (TYPE_MOUVEMENT_SUIVANT);
+            finMvtElem = false;
+            next_action = true;
+        }
+        
+    }break;
     case (TYPE_DEPLACEMENT_X_Y_THETA):
     {
         // X_Y_Theta(liste.x, liste.y, liste.theta, liste.sens, VMAX, AMAX);
